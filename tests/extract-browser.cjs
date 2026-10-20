@@ -71,9 +71,8 @@ async function main() {
   assert.deepEqual(rows.map(row => row.name), ['Jane Doe', 'John Smith', 'Zo? ?']);
   assert.deepEqual(rows.map(row => row.company), ['Current & Co', '', 'Example Ltd']);
   assert.deepEqual(rows.map(row => row.emails), [['jane@work.com', 'jane@personal.com'], [], ['zoe@example.com']]);
-  assert.deepEqual(rows.map(row => row.website), ['https://current.example/', '', 'https://example.test/']);
   assert.deepEqual(rows.map(row => row.linkedin), ['https://www.linkedin.com/in/jane-doe/', '', 'https://linkedin.com/in/zoe/']);
-  console.log('PASS website and personal LinkedIn extraction; browser extraction: separate contact rows, current employers, Unicode, masked email rejection and first two distinct emails');
+  console.log('PASS personal LinkedIn extraction; browser extraction: separate contact rows, current employers, Unicode, masked email rejection and first two distinct emails');
   page.socket.close();
 }
 main().catch(error => { console.error(error, diagnostic); process.exitCode = 1; }).finally(async () => {

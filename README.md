@@ -1,11 +1,11 @@
-# ContactOut Email Opener + Excel export (1.4.0)
+# ContactOut Email Opener + Excel export (1.4.1)
 
 Enter a page count and press Start. The extension reveals up to 25 email buttons per page, collects contacts, clicks Next, and repeats. It downloads **one genuine .xlsx workbook** for the run to **Downloads/contactout** with these columns:
 
-| Client name | Company name | Company website | Founder personal LinkedIn URL | Main email address |
-| --- | --- | --- | --- | --- |
+| Client name | Company name | Founder personal LinkedIn URL | Main email address |
+| --- | --- | --- | --- |
 
-Emails are the first two distinct, unmasked addresses in each card's displayed order. Two emails appear on separate lines in the same wrapped cell. Contacts without an email are excluded from the workbook; missing names or companies remain blank. Current company is read from a current-company field or employment marked Present/Current, not a previous employer. Contacts are deduplicated by profile URL when available, otherwise by their name/company/email combination. Company website and personal LinkedIn links are read from the contact card when available; missing links remain blank. Company LinkedIn pages are not used as personal profiles. The personal profile belongs to the listed contact: select founders using ContactOut filters. No guessed addresses, email-domain website inference, or API enrichment. Old saved checkpoints lack the new links; run collection again to populate them.
+Emails are the first two distinct, unmasked addresses in each card's displayed order. Two emails appear on separate lines in the same wrapped cell. Contacts without an email are excluded from the workbook; missing names or companies remain blank. Current company is read from a current-company field or employment marked Present/Current, not a previous employer. Contacts are deduplicated by profile URL when available, otherwise by their name/company/email combination. Personal LinkedIn links are exported as clickable blue, underlined Excel hyperlinks and are read from the contact card when available; missing links remain blank. Company LinkedIn pages are not used as personal profiles. The personal profile belongs to the listed contact: select founders using ContactOut filters. No guessed addresses or API enrichment. Company websites are not included. Old saved checkpoints lack the new links; run collection again to populate them.
 
 ## Install/update
 

@@ -56,31 +56,6 @@
     }
     return '';
   }
-  function companyWebsite(card, companyName) {
-    const blocked = /(^|\.)(linkedin\.com|contactout\.com|facebook\.com|instagram\.com|twitter\.com|x\.com|youtube\.com)$/i;
-    for (const link of card.querySelectorAll('a[href]')) {
-      if (!visible(link)) continue;
-      const url = httpUrl(link.href);
-      if (!url || blocked.test(url.hostname)) continue;
-      const description = clean([link.textContent, link.getAttribute('aria-label'), link.getAttribute('title')].join(' '));
-      const explicit = link.matches('[data-testid="company-website"], [data-field="company-website"], [class*="company-website"], [class*="companyWebsite"]') ||
-        link.closest('[data-testid="company-website"], [data-field="company-website"]');
-      const companyLink = companyName && clean(link.textContent).toLowerCase() === companyName.toLowerCase();
-      // Only use links identified as company websites. Never derive a website
-      // from an email domain, or substitute a personal/social profile URL.
-      if (explicit || companyLink || /\bcompany\s+(?:website|site)\b/i.test(description)) {
-        url.hash = '';
-        return url.href;
-      }
-    }
-    const field = card.querySelector('[data-testid="company-website"], [data-field="company-website"]');
-    if (field && visible(field)) {
-      const text = clean(field.textContent);
-      const url = httpUrl(/^https?:\/\//i.test(text) ? text : `https://${text}`);
-      if (url && url.hostname.includes('.') && !blocked.test(url.hostname)) return url.href;
-    }
-    return '';
-  }
   globalThis.extractContactRows = () => {
     const cards = new Set();
     const seeds = [...document.querySelectorAll('input[type="checkbox"], a[href^="mailto:"], button, [role="button"], a[href*="linkedin.com/in/"], div, span')]
@@ -103,7 +78,7 @@
       const companyName = company(card), linkedin = personalLinkedin(card);
       return {
         name: clean(nameElement(card).textContent), company: companyName,
-        website: companyWebsite(card, companyName), linkedin, emails: addresses(card),
+        linkedin, emails: addresses(card),
         profile: linkedin || card.querySelector('a[href*="/profile/"]')?.href || ''
       };
     });
