@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "ContactOut — Open 25 Emails",
+  "version": "1.4.0",
+  "minimum_chrome_version": "118",
+  "description": "Reveal emails across ContactOut pages and export names, current companies and emails to Excel.",
+  "permissions": ["activeTab", "scripting", "debugger", "downloads", "storage"],
+  "host_permissions": ["https://contactout.com/*", "https://*.contactout.com/*"],
+  "background": { "service_worker": "background.js" },
+  "action": {
+    "default_title": "ContactOut Email Opener",
+    "default_popup": "popup.html"
+  }
+}
