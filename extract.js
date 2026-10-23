@@ -20,7 +20,7 @@
         if (!/[*•…]/.test(email) && !found.some(value => value.toLowerCase() === email.toLowerCase())) found.push(email);
       }
     }
-    return found.slice(0, 2);
+    return found;
   }
   function company(card) {
     const explicit = card.querySelector('[data-testid="current-company"], [data-field="current-company"], [class*="current-company"], [class*="currentCompany"]');

@@ -16,7 +16,7 @@ function setup(options = {}) {
       if (args.files) return [];
       const action = args.args?.[0];
       let result;
-      if (!action) result = Array.from({ length: 25 }, (_, i) => ({ name: `Contact ${current}-${i}`, company: 'Company', emails: [`person${i}@example.com`], profile: `https://linkedin.com/in/${current}-${i}` }));
+      if (!action) result = Array.from({ length: 25 }, (_, i) => ({ name: `Contact ${current}-${i}`, company: 'Company', emails: options.revealedOnly && i >= 3 ? [] : [`person${i}@example.com`, `personal${i}@example.com`, `third${i}@example.com`], profile: `https://linkedin.com/in/${current}-${i}` }));
       else if (action === 'info' || action === 'reset') { if (action === 'reset') clicks = 0; result = { range: `page ${current}`, links: `links-${current}`, ready: true, busy: false, count: 25 - clicks }; }
       else if (action === 'clickEmail') { clicks++; events.push('click'); result = true; }
       else if (action === 'emailSettled') result = !options.unsettled;
@@ -55,4 +55,16 @@ test('failed download retains the checkpoint and can be retried', async () => {
 });
 test('no completed pages means no empty workbook on an unsettled reveal', async () => {
   const app = setup({ unsettled: true }); await app.send({ type: 'start', pages: 1 }); await app.finish(); assert.equal(app.downloads.length, 0);
+});
+
+test('revealed mode never clicks View email and exports only unmasked contacts over three pages', async () => {
+  const app = setup({ revealedOnly: true });
+  await app.send({ type: 'start', pages: 3, mode: 'revealed' });
+  const state = await app.finish();
+  assert.equal(state.mode, 'revealed');
+  assert.equal(state.completed, 3);
+  assert.equal(app.events.length, 0);
+  assert.equal(app.nexts, 2);
+  assert.equal(app.exported[0].length, 9);
+  assert.equal(app.exported[0][0].emails.length, 3);
 });

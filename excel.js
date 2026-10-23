@@ -4,9 +4,9 @@ globalThis.makeContactWorkbook = function (contacts) {
   const encoder = new TextEncoder();
   const xml = value => String(value ?? '').replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '').slice(0, 32767)
     .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  const entries = contacts.map(c => ({ ...c, emails: (c.emails || []).map(email => String(email ?? '').trim()).filter(Boolean).slice(0, 2) }))
+  const entries = contacts.map(c => ({ ...c, emails: (c.emails || []).map(email => String(email ?? '').trim()).filter(Boolean) }))
     .filter(c => c.emails.length > 0);
-  const rows = [['Client name', 'Company name', 'Founder personal LinkedIn URL', 'Main email address'],
+  const rows = [['Client name', 'Company name', 'Founder personal LinkedIn URL', 'Email addresses'],
     ...entries.map(c => [c.name, c.company, c.linkedin || '', c.emails.join('\n')])];
   const links = new Map();
   entries.forEach((contact, index) => {
@@ -17,7 +17,7 @@ globalThis.makeContactWorkbook = function (contacts) {
     } catch {}
   });
   const hyperlinks = [...links].map(([row, link]) => `<hyperlink ref="C${row}" r:id="${link.id}"/>`).join('');
-  const sheet = rows.map((row, i) => `<row r="${i + 1}"${i && row[3].includes('\n') ? ' ht="32" customHeight="1"' : ''}>${row.map((value, j) =>
+  const sheet = rows.map((row, i) => `<row r="${i + 1}"${i && row[3].includes('\n') ? ` ht="${Math.min(409, row[3].split('\n').length * 16)}" customHeight="1"` : ''}>${row.map((value, j) =>
     `<c r="${String.fromCharCode(65 + j)}${i + 1}" t="inlineStr" s="${j === 2 && links.has(i + 1) ? 2 : 1}"><is><t xml:space="preserve">${xml(value)}</t></is></c>`).join('')}</row>`).join('');
   const files = {
     '[Content_Types].xml': '<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>',

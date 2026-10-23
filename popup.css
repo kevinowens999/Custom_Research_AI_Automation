@@ -10,4 +10,5 @@ button:focus-visible { outline: 3px solid #9385f0; outline-offset: 2px; }
 #status { margin: 13px 0 8px; color: #263755; font-size: 12px; }
 small { font-size: 11px; color: #758096; }
 label { display: block; font-size: 12px; margin-bottom: 5px; }
+select { box-sizing: border-box; width: 100%; padding: 9px; margin-bottom: 10px; border: 1px solid #c9cddd; border-radius: 6px; font: inherit; }
 input { box-sizing: border-box; width: 100%; padding: 9px; margin-bottom: 14px; border: 1px solid #c9cddd; border-radius: 6px; font: inherit; }

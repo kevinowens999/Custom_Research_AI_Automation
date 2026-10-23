@@ -9,6 +9,12 @@
 <body>
   <h1>ContactOut Email Opener</h1>
   <p>Reveal emails and collect contacts across pages into one Excel file.</p>
+  <label for="mode">Export mode</label>
+  <select id="mode">
+    <option value="auto">1. Reveal up to 25, then export all info</option>
+    <option value="revealed">2. Export already revealed emails only</option>
+  </select>
+  <p style="font-size:12px">Option 2 never clicks View email. Reveal your chosen contacts on each page before starting; only visible, unmasked emails are exported.</p>
   <label for="pages">Pages to process (including this page)</label>
   <input id="pages" type="number" min="1" max="100" step="1" value="1" required>
   <div class="actions">
@@ -16,7 +22,7 @@
     <button id="stop" disabled>Stop</button>
   </div>
   <p id="status" role="status" aria-live="polite">Connecting...</p>
-  <small>Excel: Client name, Company name, Founder personal LinkedIn URL (clickable), Main email address (up to two, one per line).<br>Saves to Downloads/contactout. Normal credits apply.</small>
+  <small>Excel: Client name, Company name, Founder personal LinkedIn URL (clickable), All email addresses (one per line).<br>Saves to Downloads/contactout. Normal credits apply.</small>
   <button id="retry" type="button">Download last collected results</button>
   <script src="popup.js"></script>
 </body>

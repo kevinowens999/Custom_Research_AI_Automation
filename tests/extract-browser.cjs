@@ -70,9 +70,9 @@ async function main() {
   assert.equal(rows.length, 3);
   assert.deepEqual(rows.map(row => row.name), ['Jane Doe', 'John Smith', 'Zo? ?']);
   assert.deepEqual(rows.map(row => row.company), ['Current & Co', '', 'Example Ltd']);
-  assert.deepEqual(rows.map(row => row.emails), [['jane@work.com', 'jane@personal.com'], [], ['zoe@example.com']]);
+  assert.deepEqual(rows.map(row => row.emails), [['jane@work.com', 'jane@personal.com', 'third@example.com'], [], ['zoe@example.com']]);
   assert.deepEqual(rows.map(row => row.linkedin), ['https://www.linkedin.com/in/jane-doe/', '', 'https://linkedin.com/in/zoe/']);
-  console.log('PASS personal LinkedIn extraction; browser extraction: separate contact rows, current employers, Unicode, masked email rejection and first two distinct emails');
+  console.log('PASS personal LinkedIn extraction; browser extraction: separate contact rows, current employers, Unicode, masked email rejection and all distinct emails');
   page.socket.close();
 }
 main().catch(error => { console.error(error, diagnostic); process.exitCode = 1; }).finally(async () => {

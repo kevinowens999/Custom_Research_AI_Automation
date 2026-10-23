@@ -5,7 +5,7 @@ const supported = address => {
   try { const url = new URL(address); return url.protocol === "https:" && (url.hostname === "contactout.com" || url.hostname.endsWith(".contactout.com")); }
   catch { return false; }
 };
-function view(j) { return { running: j.running, message: j.message, pages: j.pages, completed: j.completed }; }
+function view(j) { return { running: j.running, message: j.message, pages: j.pages, completed: j.completed, mode: j.mode }; }
 async function report(j, message) {
   j.message = message;
   await chrome.storage.session.set({ [`job-${j.tabId}`]: view(j) });
@@ -70,6 +70,7 @@ async function collect(j) {
   const [result] = await chrome.scripting.executeScript({ target: { tabId: j.tabId }, func: () => globalThis.extractContactRows() });
   check(j);
   for (const row of result.result) {
+    if (!row.emails?.some(email => String(email).trim())) continue;
     const key = row.profile || JSON.stringify([row.name, row.company, row.emails]);
     if (!j.keys.has(key)) { j.keys.add(key); j.rows.push(row); }
   }
@@ -84,7 +85,7 @@ async function run(j) {
     for (let index = 1; index <= j.pages; index++) {
       check(j);
       await page(j, "reset");
-      for (let clicks = 0; clicks < 25; clicks++) {
+      for (let clicks = 0; j.mode === "auto" && clicks < 25; clicks++) {
         const current = await page(j, "info");
         if ((info.range && current.range !== info.range) || (info.links && current.links !== info.links))
           throw new Error("The results changed during processing. Stopped.");
@@ -114,7 +115,7 @@ async function run(j) {
       }
       info = await waitReady(j, finalInfo);
     }
-    await report(j, `Finished ${j.completed} pages.`);
+    await report(j, `Finished ${j.completed} pages.${j.rows.length ? '' : ' No revealed email addresses found; no workbook created.'}`);
   } catch (error) {
     await report(j, `${j.cancelled ? "Stopped by you." : error.message} ${j.completed} pages collected.`);
   } finally {
@@ -160,7 +161,9 @@ async function handle(message) {
   if (!Number.isInteger(message.pages) || message.pages < 1 || message.pages > 100) throw new Error("Enter a whole number from 1 to 100.");
   if (!supported((await chrome.tabs.get(tabId)).url)) throw new Error("Open a ContactOut results page first.");
   if (job?.running) throw new Error("A run is already active.");
-  job = { tabId, pages: message.pages, running: true, cancelled: false, completed: 0, rows: [], keys: new Set(),
+  const mode = message.mode ?? "auto";
+  if (!["auto", "revealed"].includes(mode)) throw new Error("Choose a valid export mode.");
+  job = { tabId, pages: message.pages, mode, running: true, cancelled: false, completed: 0, rows: [], keys: new Set(),
     message: "Starting...", stamp: new Date().toISOString().replace(/[:.]/g, "-") };
   await report(job, job.message);
   void run(job);
